@@ -414,7 +414,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   </div>
   <div class="callout">
     <strong>Traces cross the broker too.</strong>
-    <p>In production the broker is RabbitMQ, and Spring Cloud Stream's Rabbit binder already carries the <code>traceparent</code> in message headers. So when chat-service publishes <code>offer.made</code>, the notification work that follows joins the same trace: section 03's whole offer flow shows up in Tempo as one trace, from the browser's tap to the FCM push. Only the local Kafka (Redpanda) setup split them, and that is being closed by turning on <code>spring.cloud.stream.kafka.binder.enable-observation</code> in the six services that publish or consume. Still on the ideas list: JDBC query spans and Grafana Faro for browser errors.</p>
+    <p>In production the broker is RabbitMQ, and Spring Cloud Stream's Rabbit binder already carries the <code>traceparent</code> in message headers. So when chat-service publishes <code>offer.made</code>, the notification work that follows joins the same trace: section 03's whole offer flow shows up in Tempo as one trace, from the browser's tap to the FCM push. Locally, with Kafka (Redpanda), the same now holds: <code>spring.cloud.stream.kafka.binder.enable-observation</code> is on in the six services that publish or consume (chat, food, listing, notification, ride, user), so both brokers keep a request and its events in one trace. Still on the ideas list: JDBC query spans and Grafana Faro for browser errors.</p>
   </div>
 </section>
 
@@ -431,7 +431,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   </ol>
 </section>
 
-<footer>Built from the thirteen Saryom repositories, last updated 21 November 2026 after the observability merge and the broker tracing fix: READMEs, <code>application.yml</code> bindings, <code>render.yaml</code> blueprints, CI workflows and <code>asyncapi.yaml</code>.</footer>
+<footer>Built from the thirteen Saryom repositories, last updated 21 November 2026 after the observability merge and the Kafka tracing fix: READMEs, <code>application.yml</code> bindings, <code>render.yaml</code> blueprints, CI workflows and <code>asyncapi.yaml</code>.</footer>
 </div>
 
 <script>
