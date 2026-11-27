@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Saryom System Map</title>
-<meta name="description" content="How Saryom fits together: a React app, an API gateway and eight Spring Boot services talking through events, all on free tiers.">
+<meta name="description" content="How Saryom fits together: a React app, an API gateway and eleven Spring Boot services talking through events, all on free tiers.">
 <meta property="og:title" content="Saryom System Map">
 <meta property="og:description" content="Architecture notebook for Saryom: your neighbourhood, in one place."><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +20,11 @@
   --accent: #128ca3;
   --accent-soft: #e0f3f6;
   --market: #1aa6bf;
-  --food: #e2733a;
-  --rides: #5a62e0;
+  --lend: #7a5bd6;
+  --services: #c2862a;
+  --meetups: #d64f86;
+  --lostfound: #2f7fd0;
+  --housing: #4b8a2e;
   --jobs: #239a6a;
   --platform: #4b3fa7;
   --warn: #b35c00;
@@ -35,14 +38,14 @@
   :root:not([data-theme="light"]) {
     --bg: #0f131b; --surface: #171c27; --sunken: #0b0f16; --fg: #e6e9f2; --muted: #9aa2b8;
     --line: #2a3142; --brand: #c9cff0; --indigo: #a59cf5; --accent: #5cc8dd; --accent-soft: #15333b;
-    --market: #4fc6db; --food: #f39a62; --rides: #8f95ff; --jobs: #4cc792; --platform: #a59cf5;
+    --market: #4fc6db; --lend: #a991f5; --services: #e9b35c; --meetups: #f088b2; --lostfound: #7cb6f2; --housing: #8cca6c; --jobs: #4cc792; --platform: #a59cf5;
     --warn: #f0a54a; --warn-soft: #33260f; --ok: #4cc792; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f131b; --surface: #171c27; --sunken: #0b0f16; --fg: #e6e9f2; --muted: #9aa2b8;
   --line: #2a3142; --brand: #c9cff0; --indigo: #a59cf5; --accent: #5cc8dd; --accent-soft: #15333b;
-  --market: #4fc6db; --food: #f39a62; --rides: #8f95ff; --jobs: #4cc792; --platform: #a59cf5;
+  --market: #4fc6db; --lend: #a991f5; --services: #e9b35c; --meetups: #f088b2; --lostfound: #7cb6f2; --housing: #8cca6c; --jobs: #4cc792; --platform: #a59cf5;
   --warn: #f0a54a; --warn-soft: #33260f; --ok: #4cc792; color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -66,7 +69,7 @@ header.top { display: grid; gap: 14px; }
 
 /* map */
 .scroller { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
-.scroller svg { display: block; width: 100%; min-width: 920px; height: auto; color: var(--fg); }
+.scroller svg { display: block; width: 100%; min-width: 1100px; height: auto; color: var(--fg); }
 figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
 figcaption { color: var(--muted); font-size: 0.92rem; max-width: 80ch; }
 svg text { font-family: var(--body); fill: currentColor; }
@@ -161,9 +164,13 @@ footer { color: var(--muted); font-size: 0.85rem; }
 <header class="top">
   <span class="eyebrow">Saryom · architecture notebook · Nov 2026</span>
   <h1>How Saryom fits together</h1>
-  <p class="lede">Saryom is one React app in front of an API gateway and eight Spring Boot services. Each service owns one slice of the neighbourhood (buy and sell, chat, food, rides, jobs) and its own Postgres schema. Services never call each other directly. They announce what happened as events on a message broker, and whoever cares listens. Everything runs on free tiers, and as of 21 November every request is traced into Grafana Cloud.</p>
+  <p class="lede">Saryom is one React app in front of an API gateway and eleven Spring Boot services. Each service owns one slice of the neighbourhood (buy and sell, chat, lending, local services, meetups, lost and found, housing, jobs) and its own Postgres schema. Services never call each other directly. They announce what happened as events on a message broker, and whoever cares listens. Everything runs on free tiers, and as of 21 November every request is traced into Grafana Cloud.</p>
   <div class="stack-line">
     <span class="tag">Java 25</span><span class="tag">Spring Boot 4</span><span class="tag">Spring Cloud Gateway (WebFlux)</span><span class="tag">Spring Cloud Stream</span><span class="tag">Postgres + Flyway</span><span class="tag">React 19 + Vite 8</span><span class="tag">Firebase Auth</span><span class="tag">Render free tier</span><span class="tag">OpenTelemetry + Grafana Cloud</span>
+  </div>
+  <div class="callout">
+    <strong>What changed on 27 November</strong>
+    <p><b>Five new community services</b>: Lend &amp; Borrow, Local Services (verified reviews), Events &amp; Meetups, Lost &amp; Found (automatic matching) and Housing &amp; Roommates, each with its own schema, 4 to 8 topics, US/India regions and a section in the web app. <b>Food and rides are retired</b>: their services, topics, routes and pages are gone, and old links land on the home page.</p>
   </div>
   <div class="callout">
     <strong>What changed on 21 November</strong>
@@ -179,7 +186,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   </div>
   <figure>
     <div class="scroller">
-      <svg viewBox="0 0 1120 640" role="img" aria-label="Browser talks to the API gateway, which routes to eight services. Seven services keep their data in schemas of one Neon Postgres database, job-service uses Supabase. Five services publish or consume events on the broker. Sign-in goes to Firebase and photo uploads go straight to Cloudinary.">
+      <svg viewBox="0 0 1520 640" role="img" aria-label="Browser talks to the API gateway, which routes to eleven services. Ten services keep their data in schemas of one Neon Postgres database, job-service uses Supabase. Nine services publish or consume events on the broker. Sign-in goes to Firebase and photo uploads go straight to Cloudinary.">
         <defs>
           <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity="0.65"/></marker>
           <marker id="ahe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill: var(--indigo)"/></marker>
@@ -192,62 +199,65 @@ footer { color: var(--muted); font-size: 0.85rem; }
           <text class="t-sub" x="135" y="62" text-anchor="middle">photo storage + CDN</text>
         </g>
         <g class="node" data-id="web" tabindex="0" role="button" aria-label="Browser, saryom-web">
-          <rect class="box" x="400" y="16" width="320" height="62" rx="10"/>
-          <text class="t-title" x="560" y="42" text-anchor="middle">Browser · saryom-web</text>
-          <text class="t-sub" x="560" y="62" text-anchor="middle">React 19 SPA on a Render static site</text>
+          <rect class="box" x="600" y="16" width="320" height="62" rx="10"/>
+          <text class="t-title" x="760" y="42" text-anchor="middle">Browser · saryom-web</text>
+          <text class="t-sub" x="760" y="62" text-anchor="middle">React 19 SPA on a Render static site</text>
         </g>
         <g class="node" data-id="firebase" tabindex="0" role="button" aria-label="Firebase Auth">
-          <rect class="box" x="870" y="16" width="230" height="62" rx="10"/>
-          <text class="t-title" x="985" y="42" text-anchor="middle">Firebase Auth</text>
-          <text class="t-sub" x="985" y="62" text-anchor="middle">Google, Apple, email sign-in</text>
+          <rect class="box" x="1270" y="16" width="230" height="62" rx="10"/>
+          <text class="t-title" x="1385" y="42" text-anchor="middle">Firebase Auth</text>
+          <text class="t-sub" x="1385" y="62" text-anchor="middle">Google, Apple, email sign-in</text>
         </g>
-        <line class="wire" x1="400" y1="47" x2="252" y2="47" marker-end="url(#ah)"/>
-        <text class="t-lbl" x="326" y="39" text-anchor="middle">uploads photos directly</text>
-        <line class="wire" x1="720" y1="47" x2="868" y2="47" marker-end="url(#ah)" marker-start="url(#ah)"/>
-        <text class="t-lbl" x="794" y="39" text-anchor="middle">sign in, get ID token</text>
+        <line class="wire" x1="600" y1="47" x2="252" y2="47" marker-end="url(#ah)"/>
+        <text class="t-lbl" x="426" y="39" text-anchor="middle">uploads photos directly</text>
+        <line class="wire" x1="920" y1="47" x2="1268" y2="47" marker-end="url(#ah)" marker-start="url(#ah)"/>
+        <text class="t-lbl" x="1094" y="39" text-anchor="middle">sign in, get ID token</text>
 
         <!-- gateway -->
-        <line class="wire" x1="560" y1="78" x2="560" y2="128" marker-end="url(#ah)"/>
-        <text class="t-lbl" x="572" y="108">HTTPS + Bearer token · wss /ws</text>
+        <line class="wire" x1="760" y1="78" x2="760" y2="128" marker-end="url(#ah)"/>
+        <text class="t-lbl" x="772" y="108">HTTPS + Bearer token · wss /ws</text>
         <g class="node" data-id="gateway" tabindex="0" role="button" aria-label="API gateway">
-          <rect class="box" x="300" y="130" width="520" height="64" rx="10"/>
-          <text class="t-title" x="560" y="156" text-anchor="middle">api-gateway  :8080</text>
-          <text class="t-sub" x="560" y="177" text-anchor="middle">checks the token · removes any client X-User-Id, sets a trusted one · CORS · routing</text>
+          <rect class="box" x="500" y="130" width="520" height="64" rx="10"/>
+          <text class="t-title" x="760" y="156" text-anchor="middle">api-gateway  :8080</text>
+          <text class="t-sub" x="760" y="177" text-anchor="middle">checks the token · removes any client X-User-Id, sets a trusted one · CORS · routing</text>
         </g>
 
         <!-- bus -->
-        <line class="wire" x1="560" y1="194" x2="560" y2="222"/>
-        <line class="wire" x1="80" y1="222" x2="1032" y2="222"/>
-        <text class="t-lbl" x="574" y="214">/api/{area}/** forwarded unchanged</text>
+        <line class="wire" x1="760" y1="194" x2="760" y2="222"/>
+        <line class="wire" x1="80" y1="222" x2="1440" y2="222"/>
+        <text class="t-lbl" x="774" y="214">/api/{area}/** forwarded unchanged</text>
         <g id="drops"></g>
 
         <!-- services (drawn by script into this group) -->
         <g id="svcs"></g>
 
         <!-- data -->
-        <rect class="box-sunk" x="18" y="392" width="940" height="104" rx="12"/>
+        <rect class="box-sunk" x="18" y="392" width="1348" height="104" rx="12"/>
         <text class="t-title" x="34" y="414" style="font-size:13px">Neon Postgres · one database, one schema and one login role per service</text>
-        <rect class="box-sunk" x="970" y="392" width="132" height="104" rx="12"/>
-        <text class="t-title" x="1036" y="414" text-anchor="middle" style="font-size:13px">Supabase</text>
+        <rect class="box-sunk" x="1378" y="392" width="124" height="104" rx="12"/>
+        <text class="t-title" x="1440" y="414" text-anchor="middle" style="font-size:13px">Supabase</text>
         <g id="cells"></g>
 
         <!-- broker -->
         <g class="node" data-id="broker" tabindex="0" role="button" aria-label="Event broker">
-          <rect class="box" x="18" y="520" width="1084" height="48" rx="10"/>
-          <text class="t-title" x="560" y="542" text-anchor="middle" style="font-size:14px">Event broker · CloudAMQP RabbitMQ in production · Redpanda (Kafka API) on your laptop</text>
-          <text class="t-sub" x="560" y="559" text-anchor="middle">24 topics, contract in saryom-kafka/asyncapi.yaml · see section 02</text>
+          <rect class="box" x="18" y="520" width="1484" height="48" rx="10"/>
+          <text class="t-title" x="760" y="542" text-anchor="middle" style="font-size:14px">Event broker · CloudAMQP RabbitMQ in production · Redpanda (Kafka API) on your laptop</text>
+          <text class="t-sub" x="760" y="559" text-anchor="middle">40 topics, contract in saryom-kafka/asyncapi.yaml · see section 02</text>
         </g>
         <g id="evlines"></g>
 
         <!-- observability placeholder -->
-        <rect x="18" y="584" width="1084" height="42" rx="10" style="fill: var(--accent-soft); stroke: var(--accent)" stroke-width="1.4"/>
-        <text class="t-lbl" x="560" y="610" text-anchor="middle" style="fill: var(--accent); font-weight:700">Observability (live): all 9 services push OpenTelemetry over OTLP → Grafana Cloud free · Mimir, Tempo, Loki, dashboard, 6 alerts · section 06</text>
+        <rect x="18" y="584" width="1484" height="42" rx="10" style="fill: var(--accent-soft); stroke: var(--accent)" stroke-width="1.4"/>
+        <text class="t-lbl" x="760" y="610" text-anchor="middle" style="fill: var(--accent); font-weight:700">Observability (live): all 12 services push OpenTelemetry over OTLP → Grafana Cloud free · Mimir, Tempo, Loki, dashboard, 6 alerts · section 06</text>
       </svg>
     </div>
     <div class="legend">
       <span><i class="sw" style="background:var(--market)"></i>Buy &amp; sell</span>
-      <span><i class="sw" style="background:var(--food)"></i>Food</span>
-      <span><i class="sw" style="background:var(--rides)"></i>Rides</span>
+      <span><i class="sw" style="background:var(--lend)"></i>Lend &amp; borrow</span>
+      <span><i class="sw" style="background:var(--services)"></i>Local services</span>
+      <span><i class="sw" style="background:var(--meetups)"></i>Meetups</span>
+      <span><i class="sw" style="background:var(--lostfound)"></i>Lost &amp; found</span>
+      <span><i class="sw" style="background:var(--housing)"></i>Housing</span>
       <span><i class="sw" style="background:var(--jobs)"></i>Jobs</span>
       <span><i class="sw" style="background:var(--platform)"></i>Shared platform</span>
       <span><i class="dash"></i>Events (arrowhead shows direction)</span>
@@ -263,7 +273,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   <div class="sec-head">
     <span class="eyebrow">02 · Event flow</span>
     <h2>Who announces what, and who listens</h2>
-    <p>Five services publish, three consume. Notification-service listens to almost everything because nearly every event means someone should get a push or an email. Pick a service to see only the topics it touches.</p>
+    <p>Eight services publish, three consume. Notification-service listens to almost everything because nearly every event means someone should get a push or an email. Pick a service to see only the topics it touches.</p>
   </div>
   <div class="filters" id="filters" role="group" aria-label="Filter topics by service"></div>
   <div class="tablewrap">
@@ -278,7 +288,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   </div>
   <div class="callout">
     <strong>A two-hop chain: following people.</strong>
-    <p>User-service consumes <code>listing.created</code>, <code>food.posted</code> and <code>ride.posted</code>, looks up who follows that person, and publishes <code>seller.listed</code>, <code>giver.shared</code> or <code>driver.offered</code>. Notification-service turns those into pushes. The service that knows about follows owns the fan-out, so listing, food and ride services stay ignorant of the social graph.</p>
+    <p>User-service consumes <code>listing.created</code>, looks up who follows that seller, and publishes <code>seller.listed</code>. Notification-service turns that into pushes. The service that knows about follows owns the fan-out, so listing-service stays ignorant of the social graph. User-service also hears <code>lending.returned</code> and <code>lostfound.resolved</code>, which open a two-way review between the people involved, the same way a sale does.</p>
   </div>
 </section>
 
@@ -325,20 +335,20 @@ footer { color: var(--muted); font-size: 0.85rem; }
 <section id="hosting">
   <div class="sec-head">
     <span class="eyebrow">05 · Hosting and delivery</span>
-    <h2>Running ten deployables for free</h2>
+    <h2>Running thirteen deployables for free</h2>
     <p>The free tiers are not just where Saryom runs. Their limits shaped real code: connection pools of three, a start-up cache, a daily keep-alive ping.</p>
   </div>
   <div class="tablewrap">
     <table class="host">
       <thead><tr><th>Piece</th><th>Runs on</th><th>Free-tier limit, and how the code answers it</th></tr></thead>
       <tbody>
-        <tr><td>9 backends</td><td>Render web services (Docker), Oregon</td><td>512 MB and a tenth of a CPU, asleep after 15 idle minutes. A plain Spring Boot start took 3 to 4 minutes. A Java 25 AOT start-up cache, the serial GC and C1-only compilation bring it under a minute; a cold request still waits 35 to 65 seconds.</td></tr>
+        <tr><td>12 backends</td><td>Render web services (Docker), Oregon</td><td>512 MB and a tenth of a CPU, asleep after 15 idle minutes. A plain Spring Boot start took 3 to 4 minutes. A Java 25 AOT start-up cache, the serial GC and C1-only compilation bring it under a minute; a cold request still waits 35 to 65 seconds.</td></tr>
         <tr><td>saryom-web</td><td>Render static site</td><td>Hashed assets cached for a year, <code>index.html</code> never cached so a deploy can't leave the page pointing at deleted CSS. Firebase's auth helper is rewritten onto the same domain so Safari can finish sign-in.</td></tr>
         <tr><td>7 schemas</td><td>Neon Postgres 18, us-east-2</td><td>Connection limits on a shared database, so each service caps Hikari at 3 connections.</td></tr>
         <tr><td>jobs schema</td><td>Supabase Postgres</td><td>Pauses after about a week of no activity. A GitHub Action in job-service reads one public endpoint every day at 11:17 UTC to keep it awake.</td></tr>
         <tr><td>Event broker</td><td>CloudAMQP (RabbitMQ)</td><td>Free hosted Kafka is rare, so production uses RabbitMQ through the same Spring Cloud Stream code; only the profile changes.</td></tr>
         <tr><td>Monitoring</td><td>Grafana Cloud free (Mimir, Tempo, Loki)</td><td>10k metric series, 50 GB logs and 50 GB traces a month, 14 days' retention. Fixed latency buckets keep Saryom near 2k series, and telemetry is pushed so it never wakes a sleeping service.</td></tr>
-        <tr><td>Uptime check</td><td>GitHub Actions, saryom-api-gateway</td><td>Daily at 11:20 UTC (5:20 AM Central), not hourly: each run keeps nine services awake for about 2.3 instance hours, and hourly checks would use up Render's 750 free hours.</td></tr>
+        <tr><td>Uptime check</td><td>GitHub Actions, saryom-api-gateway</td><td>Daily at 11:20 UTC (5:20 AM Central), not hourly: each run keeps twelve services awake for about 3 instance hours, and hourly checks would use up Render's 750 free hours.</td></tr>
         <tr><td>Sign-in, photos, email, push</td><td>Firebase Auth, Cloudinary, Brevo, FCM</td><td>Each channel is optional: with no credentials, the service logs instead of failing to start.</td></tr>
       </tbody>
     </table>
@@ -359,7 +369,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   <div class="sec-head">
     <span class="eyebrow">06 · Observability · live since 21 Nov</span>
     <h2>Every request, traced into Grafana Cloud for free</h2>
-    <p>All nine Spring services now send metrics, traces and logs with OpenTelemetry to Grafana Cloud's free tier. One Render environment group switches it on everywhere. Full write-up: <code>docs/observability.md</code> in saryom-api-gateway.</p>
+    <p>All twelve Spring services now send metrics, traces and logs with OpenTelemetry to Grafana Cloud's free tier. One Render environment group switches it on everywhere. Full write-up: <code>docs/observability.md</code> in saryom-api-gateway.</p>
   </div>
   <figure>
     <div class="scroller">
@@ -368,7 +378,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
         <marker id="oha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill: var(--accent)"/></marker></defs>
         <rect class="box" x="20" y="40" width="130" height="56" rx="10"/><text class="t-title" x="85" y="73" text-anchor="middle" style="font-size:14px">Browser</text>
         <rect class="box" x="210" y="34" width="200" height="68" rx="10"/><text class="t-title" x="310" y="60" text-anchor="middle" style="font-size:14px">api-gateway</text><text class="t-sub" x="310" y="80" text-anchor="middle">starts the trace · X-Request-Id</text>
-        <rect class="box" x="470" y="34" width="200" height="68" rx="10"/><text class="t-title" x="570" y="60" text-anchor="middle" style="font-size:14px">8 services</text><text class="t-sub" x="570" y="80" text-anchor="middle">continue the same trace</text>
+        <rect class="box" x="470" y="34" width="200" height="68" rx="10"/><text class="t-title" x="570" y="60" text-anchor="middle" style="font-size:14px">11 services</text><text class="t-sub" x="570" y="80" text-anchor="middle">continue the same trace</text>
         <line x1="150" y1="68" x2="206" y2="68" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.4" marker-end="url(#oh)"/>
         <line x1="410" y1="68" x2="466" y2="68" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.4" marker-end="url(#oh)"/>
         <text class="t-mono" x="440" y="24" text-anchor="middle">traceparent →</text>
@@ -384,7 +394,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
         <rect class="box" x="796" y="134" width="288" height="50" rx="8"/><text class="t-title" x="940" y="156" text-anchor="middle" style="font-size:13px">Dashboard "Saryom services"</text><text class="t-sub" x="940" y="174" text-anchor="middle">rate, errors, latency, heap, pool, slow traces</text>
         <rect class="box" x="796" y="200" width="288" height="50" rx="8"/><text class="t-title" x="940" y="222" text-anchor="middle" style="font-size:13px">6 alert rules · namespace saryom</text><text class="t-sub" x="940" y="240" text-anchor="middle">Alertmanager → email</text>
         <text class="t-mono" x="940" y="272" text-anchor="middle">10k series · 50 GB logs · 50 GB traces · 14 days</text>
-        <rect class="box" x="210" y="214" width="460" height="56" rx="10"/><text class="t-title" x="440" y="238" text-anchor="middle" style="font-size:13.5px">GitHub Actions uptime.yml · daily 11:20 UTC</text><text class="t-sub" x="440" y="258" text-anchor="middle">wakes all 9, checks /actuator/health + 3 public routes, records cold-start times</text>
+        <rect class="box" x="210" y="214" width="460" height="56" rx="10"/><text class="t-title" x="440" y="238" text-anchor="middle" style="font-size:13.5px">GitHub Actions uptime.yml · daily 11:20 UTC</text><text class="t-sub" x="440" y="258" text-anchor="middle">wakes all 12, checks /actuator/health + 3 public routes, records cold-start times</text>
         <path d="M440,214 V196 H570 V106" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#oh)"/>
         <text class="t-lbl" x="586" y="196">failed run emails you</text>
       </svg>
@@ -396,7 +406,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
       <div><b>Metrics → Mimir</b><span>Micrometer pushes once a minute: request rate, 5xx rate, latency, JVM heap and CPU, Hikari pool, log-line counts. Latency uses fixed buckets from 50 ms to 60 s instead of ~70 defaults, which keeps the whole system near 2k of the 10k free series. The 30 s and 60 s buckets exist because a cold start takes 35 to 75 s.</span></div>
       <div><b>Traces → Tempo</b><span>Micrometer Tracing on the OpenTelemetry bridge. The gateway's <code>X-Request-Id</code>, returned to the browser, is stored as <code>request.id</code>, so an id from a bug report finds the whole request: <code>{ span.request.id = "…" }</code>. Health checks and Spring Security filter spans are left out to save the allowance.</span></div>
       <div><b>Logs → Loki</b><span>An OpenTelemetry Logback appender ships every line with its trace and span id, so you can jump from a slow span to its logs. Render's own log view still gets the same lines on stdout.</span></div>
-      <div><b>Switching it on</b><span>Off unless <code>OTLP_ENABLED=true</code>. The Render env group <code>saryom-observability</code> holds <code>OTLP_ENABLED</code>, <code>OTLP_ENDPOINT</code>, <code>OTLP_AUTH_HEADER</code> and <code>DEPLOY_ENV</code>, linked to all nine services. Locally, <code>docker compose --profile observability up</code> in saryom-db runs the same stack in one <code>grafana/otel-lgtm</code> container.</span></div>
+      <div><b>Switching it on</b><span>Off unless <code>OTLP_ENABLED=true</code>. The Render env group <code>saryom-observability</code> holds <code>OTLP_ENABLED</code>, <code>OTLP_ENDPOINT</code>, <code>OTLP_AUTH_HEADER</code> and <code>DEPLOY_ENV</code>, linked to all twelve services. Locally, <code>docker compose --profile observability up</code> in saryom-db runs the same stack in one <code>grafana/otel-lgtm</code> container.</span></div>
     </div>
   </div>
   <div class="tablewrap">
@@ -414,7 +424,7 @@ footer { color: var(--muted); font-size: 0.85rem; }
   </div>
   <div class="callout">
     <strong>Traces cross the broker too.</strong>
-    <p>In production the broker is RabbitMQ, and Spring Cloud Stream's Rabbit binder already carries the <code>traceparent</code> in message headers. So when chat-service publishes <code>offer.made</code>, the notification work that follows joins the same trace: section 03's whole offer flow shows up in Tempo as one trace, from the browser's tap to the FCM push. Locally, with Kafka (Redpanda), the same now holds: <code>spring.cloud.stream.kafka.binder.enable-observation</code> is on in the six services that publish or consume (chat, food, listing, notification, ride, user), so both brokers keep a request and its events in one trace. Still on the ideas list: JDBC query spans and Grafana Faro for browser errors.</p>
+    <p>In production the broker is RabbitMQ, and Spring Cloud Stream's Rabbit binder already carries the <code>traceparent</code> in message headers. So when chat-service publishes <code>offer.made</code>, the notification work that follows joins the same trace: section 03's whole offer flow shows up in Tempo as one trace, from the browser's tap to the FCM push. Locally, with Kafka (Redpanda), the same now holds: <code>spring.cloud.stream.kafka.binder.enable-observation</code> is on in the nine services that publish or consume (chat, housing, lending, listing, lostfound, meetup, notification, provider, user), so both brokers keep a request and its events in one trace. Still on the ideas list: JDBC query spans and Grafana Faro for browser errors.</p>
   </div>
 </section>
 
@@ -426,38 +436,41 @@ footer { color: var(--muted); font-size: 0.85rem; }
   <ol class="notes">
     <li><strong>Deploy blueprints have drifted from the live settings.</strong> A few <code>render.yaml</code> files still carry local-development settings that the Render dashboard overrides in production. Aligning the files with what actually runs is on the to-do list.</li>
     <li><strong>Events can be lost.</strong> Publishing happens after the database write, and if the broker is unreachable the event is logged and dropped (the code says so honestly). For notifications that's acceptable. For <code>listing.sold</code>, a lost event means offers stay open on a sold item. A transactional outbox (write the event to a table in the same transaction, relay it afterwards) is the standard fix. The new <code>SaryomErrorLogSpike</code> alert will at least tell you when sends start failing.</li>
-    <li><strong>The gateway README lags its routes.</strong> The routes table lists all eight services, but the environment variable table stops at five (food, ride and job URLs are missing).</li>
+    <li><strong>Twelve services on 750 free hours.</strong> Render's free tier gives 750 instance hours a month across the workspace. Twelve sleepy services fit only because most sleep most of the time. A busy month would need a paid instance or fewer, merged services.</li>
     <li><strong>Mock fallback can hide an outage.</strong> The web app quietly switches to seeded demo data when a request hits a network error. That's great for demos, but a visitor during a real outage may see fake listings with no hint that something is wrong.</li>
   </ol>
 </section>
 
-<footer>Built from the thirteen Saryom repositories, last updated 21 November 2026 after the observability merge and the Kafka tracing fix: READMEs, <code>application.yml</code> bindings, <code>render.yaml</code> blueprints, CI workflows and <code>asyncapi.yaml</code>.</footer>
+<footer>Built from the Saryom repositories, last updated 27 November 2026 after adding the five community services and retiring food and rides: READMEs, <code>application.yml</code> bindings, <code>render.yaml</code> blueprints, CI workflows and <code>asyncapi.yaml</code>.</footer>
 </div>
 
 <script>
 const SVC = [
-  { id: "user", name: "user", port: 8081, schema: "users", role: "saryom_users", col: "platform", pub: 4, sub: 7 },
+  { id: "user", name: "user", port: 8081, schema: "users", role: "saryom_users", col: "platform", pub: 2, sub: 5 },
   { id: "listing", name: "listing", port: 8082, schema: "listings", role: "saryom_listings", col: "market", pub: 6, sub: 0 },
   { id: "chat", name: "chat", port: 8083, schema: "chat", role: "saryom_chat", col: "market", pub: 4, sub: 3 },
   { id: "media", name: "media", port: 8084, schema: "media", role: "saryom_media", col: "market", pub: 0, sub: 0 },
-  { id: "notification", name: "notification", port: 8085, schema: "notifications", role: "saryom_notifications", col: "platform", pub: 0, sub: 20 },
-  { id: "food", name: "food", port: 8086, schema: "food", role: "saryom_food", col: "food", pub: 4, sub: 0 },
-  { id: "ride", name: "ride", port: 8087, schema: "rides", role: "saryom_rides", col: "rides", pub: 6, sub: 0 },
+  { id: "notification", name: "notification", port: 8085, schema: "notifications", role: "saryom_notifications", col: "platform", pub: 0, sub: 38 },
+  { id: "lending", name: "lending", port: 8089, schema: "lending", role: "saryom_lending", col: "lend", pub: 8, sub: 0 },
+  { id: "provider", name: "provider", port: 8090, schema: "providers", role: "saryom_providers", col: "services", pub: 6, sub: 0 },
+  { id: "meetup", name: "meetup", port: 8091, schema: "meetups", role: "saryom_meetups", col: "meetups", pub: 5, sub: 0 },
+  { id: "lostfound", name: "lostfound", port: 8092, schema: "lostfound", role: "saryom_lostfound", col: "lostfound", pub: 5, sub: 0 },
+  { id: "housing", name: "housing", port: 8093, schema: "housing", role: "saryom_housing", col: "housing", pub: 4, sub: 0 },
   { id: "job", name: "job", port: 8088, schema: "jobs", role: "RLS on", col: "jobs", pub: 0, sub: 0 },
 ];
 
 const DETAIL = {
   web: { title: "saryom-web", meta: "Vite 8 · React 19 · TypeScript strict · Render static site",
-    does: ["Four sections of equal standing: Buy & Sell, Food, Travel (rides) and Jobs, behind one sign-in.",
-      "One typed API module per service (listings, chats, food, rides, jobs, media, notifications…), all going through a single fetch wrapper that adds the bearer token and parses RFC 7807 errors.",
+    does: ["Eight sections of equal standing on the home page: Buy & Sell, Lend & Borrow, Local Services, Meetups, Lost & Found, Housing, Jobs and AI Skills, behind one sign-in. Feeds follow the viewer's region (US or India), with $ or ₹ per post.",
+      "One typed API module per service (listings, chats, lending, providers, meetups, lostFound, housing, jobs, media, notifications…), all going through a single fetch wrapper that adds the bearer token and parses RFC 7807 errors.",
       "Chat uses @stomp/stompjs against wss://…/ws through the gateway.",
       "Mock fallback: with no backend configured, or on a network error, every call is served from an in-memory store seeded with listings, a user and a chat.", "UI refresh (PR #44): an SVG icon set replaces emoji icons, and v2 tokens add a colour per section, status colours, shadows and spacing scales. Teal stays the only call-to-action colour."],
     kv: [["Talks to", "api-gateway, Firebase Auth, Cloudinary"], ["Tests", "Vitest + Testing Library"]],
     idea: "withFallback(real, mock) on every API method means the whole UI works with zero backends running. It made front-end work possible before the services existed." },
   gateway: { title: "api-gateway", meta: "Port 8080 · Spring Cloud Gateway · WebFlux (reactive) · no database",
-    does: ["The only public entry point. Routes /api/users, listings, chats, media, notifications, food, rides, jobs and /ws to the right service without rewriting paths.",
+    does: ["The only public entry point. Routes /api/users, listings, chats, media, notifications, lending, providers, meetups, lost-found, housing, jobs and /ws to the right service without rewriting paths.",
       "A GlobalFilter at order -100 removes any client-sent X-User-Id, verifies the Firebase token, then sets X-User-Id itself.",
-      "Public routes (browsing listings, food, rides) still accept a token if present, so results can show your saved flags.",
+      "Public routes (browsing listings and the community feeds) still accept a token if present, so results can show your saved flags.",
       "Answers 401 with an application/problem+json body. Handles CORS for every service in one place.", "Starts every trace: CorrelationIdGatewayFilter sets X-Request-Id, returns it to the browser and stores it on the span, then traceparent goes downstream."],
     kv: [["Auth", "FirebaseTokenVerifier; StubTokenVerifier under dev only"], ["Why reactive", "It only shuffles bytes, so a few event-loop threads handle many slow connections, including WebSockets"]],
     idea: "verifyIdToken from the Firebase SDK is blocking, so the filter runs it on Reactor's boundedElastic scheduler. Blocking an event-loop thread in WebFlux would stall every request on that thread." },
@@ -465,7 +478,8 @@ const DETAIL = {
     does: ["Profiles, ratings, seller stats and follows.",
       "No sign-up endpoint: the first authenticated GET /api/users/me creates the profile and publishes user.registered.",
       "Keeps counters fed by other services' events: sales count from listing.sold, reply speed from message.sent.",
-      "Turns listing.created, food.posted and ride.posted into seller.listed, giver.shared and driver.offered for followers."],
+      "Turns listing.created into seller.listed for followers.",
+      "Opens two-way reviews after a sale, a returned loan (lending.returned) or a reunited lost item (lostfound.resolved)."],
     kv: [["Tested edge case", "Two concurrent first logins for the same user"]],
     idea: "Auto-provisioning on first request removes a whole registration flow, because Firebase already proved who the person is. The only hard part is the race when two tabs log in at once, and there is a test for it." },
   listing: { title: "listing-service", meta: "Port 8082 · schema listings · Spring MVC + JPA + Flyway",
@@ -486,26 +500,44 @@ const DETAIL = {
       "Computes the SHA-1 signature itself instead of pulling in the Cloudinary SDK."],
     kv: [["Not done yet", "Deleting the actual Cloudinary file (needs the Admin API)"]],
     idea: "The backend never touches image bytes. On a 512 MB instance, streaming photos through the JVM would be the fastest way to run out of memory." },
-  notification: { title: "notification-service", meta: "Port 8085 · schema notifications · consumes 20 topics",
+  notification: { title: "notification-service", meta: "Port 8085 · schema notifications · consumes 38 topics",
     does: ["One consumer group listening to nearly every topic, mapping each event to a push (FCM) or an email (Brevo).",
       "Idempotent: processed_event, keyed by eventId, makes redelivered events no-ops.",
       "Every attempt, including a failed one, writes a notification_log row. A failing channel never blocks the others or rejects the message.",
       "Exposes GET /api/notifications for the in-app history."],
     kv: [["Channels", "NotificationChannel beans: add one, and the dispatcher picks it up"]],
     idea: "Events implement a sealed PlatformEvent interface and the dispatcher switches over it without a default branch. Adding a new event type fails compilation until someone decides what notification it should produce." },
-  food: { title: "food-service", meta: "Port 8086 · schema food · Spring MVC + JPA + Flyway",
-    does: ["Share surplus food: givers post, nearby takers reserve and collect.",
-      "FoodPost owns its lifecycle: AVAILABLE, RESERVED, COMPLETED or CANCELLED. Invalid transitions are impossible from outside the entity.",
-      "A scheduled ReservationSweeper releases reservations nobody collected and publishes food.reservation_expired."],
-    kv: [["Docs", "Swagger UI at /swagger-ui.html"]],
-    idea: "Expiry for browsing is derived from bestBefore at query time, so most of 'expiry' needs no scheduler at all. Only reservations that must be actively released need the sweeper." },
-  ride: { title: "ride-service", meta: "Port 8087 · schema rides · Spring MVC + JPA + Flyway",
-    does: ["Drivers post trips with spare seats; riders book seats.",
-      "Ride is OPEN, FULL, COMPLETED or CANCELLED; FULL is derived from the seat count, never set by a caller.",
-      "Each Booking is its own row so the driver knows who is coming and cancelling keeps history.",
-      "A DepartedRideSweeper tidies rides whose departure has passed."],
-    kv: [["Overbooking guards", "@Version on Ride, a CHECK on seats, a partial unique index on confirmed bookings"]],
-    idea: "Three layers stop two riders taking the last seat: optimistic locking makes the loser get a 409, a CHECK constraint stops negative seats, and a partial unique index stops double booking even if application code has a bug." },
+  lending: { title: "lending-service", meta: "Port 8089 · schema lending · Spring MVC + JPA + Flyway",
+    does: ["Lend & Borrow: lend a ladder, a drill or a tent for whole days, free or for a small daily fee, with an optional deposit.",
+      "Loans are date ranges on a real calendar. Approving one locks the item row and declines every clashing request, so the same weekend can't be promised twice.",
+      "A borrower can offer one of their own things in return, and a lender can say what they'd like to borrow back: an optional swap inside the same request.",
+      "A scheduled sweep publishes lending.due_soon and lending.overdue; a 'need' board lets people ask for something nobody has listed yet."],
+    kv: [["Publishes", "8 topics"], ["Regions", "US / IN, currency from region"]],
+    idea: "Locking the item row only while approving keeps reads fast and still makes double booking impossible. The calendar check and the decline-the-rest step happen in one transaction." },
+  provider: { title: "provider-service", meta: "Port 8090 · schema providers · Spring MVC + JPA + Flyway",
+    does: ["Local Services: tutors, cleaners, handymen, dog walkers and home cooks, with weekly hours and bookable slots.",
+      "Reviews are verified: only the client of a completed booking can write one, once (a unique booking_id).",
+      "Overall rating plus quality, punctuality and value sub-scores; the provider can reply once."],
+    kv: [["Publishes", "6 topics"], ["Guard", "unique booking_id on reviews"]],
+    idea: "Tying a review to a completed booking turns 'verified' from a marketing word into a database constraint." },
+  meetup: { title: "meetup-service", meta: "Port 8091 · schema meetups · Spring MVC + JPA + Flyway",
+    does: ["Events & Meetups: cricket on Sunday, a potluck, a movie night. RSVP with plus-ones and a dish to bring.",
+      "Capacity counts heads. A party that doesn't fit joins a fair waitlist; freed places go in arrival order, and a party too big for the gap is skipped, not blocking.",
+      "Changes, cancellations and reminders go to everyone going as one broadcast event."],
+    kv: [["Publishes", "5 topics"], ["Calendar", "ICS download per meetup"]],
+    idea: "Skipping a too-big party instead of stopping at it keeps the waitlist fair to everyone behind it, without letting a group of six jump the queue." },
+  lostfound: { title: "lostfound-service", meta: "Port 8092 · schema lostfound · Spring MVC + JPA + Flyway",
+    does: ["Lost & Found: post what you lost or found, and the service looks for the other half.",
+      "Matching scores open reports of the other kind by place (35%), time (25%), and category and description, never past 15 miles.",
+      "Claims ask a question only the owner can answer; the finder decides. Sightings help with lost pets."],
+    kv: [["Publishes", "5 topics"], ["Resolved", "lostfound.resolved opens reviews in user-service"]],
+    idea: "Scoring both directions on every post or renewal means a match is found whichever half arrives second, with no background job." },
+  housing: { title: "housing-service", meta: "Port 8093 · schema housing · Spring MVC + JPA + Flyway",
+    does: ["Housing & Roommates: rooms, shared rooms, sublets and whole places, plus a 'roommate wanted' board.",
+      "Roommate compatibility from diet, smoking, drinking, pets, sleep hours, tidiness, guests and languages.",
+      "Search by campus distance; book a viewing slot; saved searches push housing.listing_match."],
+    kv: [["Publishes", "4 topics"], ["Built for", "students and young professionals, US and India"]],
+    idea: "Describing the household and the seeker with the same fields makes compatibility a simple comparison, and shows people why they match instead of a black-box score." },
   job: { title: "job-service", meta: "Port 8088 · Supabase Postgres, schema jobs · the only service on the prod profile",
     does: ["Each person's private job-application tracker, plus a recruiter directory everyone shares.",
       "Row level security is forced on every table and the service's role cannot bypass it, so a query that forgets 'where user_id = ?' returns nothing.",
@@ -514,7 +546,7 @@ const DETAIL = {
     kv: [["Keep-alive", "Daily GitHub Action so Supabase doesn't pause"]],
     idea: "Security enforced by the database survives bugs in the service. The trade-off is that RLS filters rows, not columns, so hiding recruiter phone numbers from anonymous visitors still has to happen in the API." },
   broker: { title: "Event broker", meta: "CloudAMQP RabbitMQ in production · Redpanda (Kafka API) locally",
-    does: ["Carries 24 topics. The contract is saryom-kafka/asyncapi.yaml; each service keeps its own copy of the event records.",
+    does: ["Carries 40 topics. The contract is saryom-kafka/asyncapi.yaml; each service keeps its own copy of the event records.",
       "Every event has a producer-generated eventId and occurredAt, which is what makes idempotency and out-of-order handling possible.",
       "saryom-kafka also has plain-Java producer and consumer demos that show what Spring Cloud Stream does under the hood."],
     kv: [["Switching", "Spring profile kafka or rabbit; no code change"]],
@@ -549,7 +581,7 @@ SVC.forEach((s, i) => {
   g.append(el("text", { class: "t-sub", x: x + 12, y: 322 }, ev));
   svcs.append(g);
   const supa = s.id === "job";
-  const cx0 = supa ? 974 : x + 8, cw = supa ? 116 : 108;
+  const cx0 = supa ? 1382 : x + 8, cw = supa ? 116 : 108;
   cells.append(el("line", { class: "wire", x1: cx, y1: 346, x2: cx, y2: 428, "marker-end": "url(#ah)", "marker-start": "url(#ah)" }));
   cells.append(el("rect", { class: "box", x: cx0, y: 430, width: cw, height: 52, rx: 8 }));
   cells.append(el("text", { class: "t-title", x: cx0 + cw / 2, y: 452, "text-anchor": "middle", style: "font-size:13px" }, s.schema));
@@ -592,8 +624,6 @@ document.querySelectorAll("#map .node").forEach(n => {
 const EVENTS = [
   { p: "user", t: "user.registered", c: ["notification"], w: "Welcome email through Brevo" },
   { p: "user", t: "seller.listed", c: ["notification"], w: "Push to followers of the seller" },
-  { p: "user", t: "giver.shared", c: ["notification"], w: "Push to followers of the food giver" },
-  { p: "user", t: "driver.offered", c: ["notification"], w: "Push to followers of the driver" },
   { p: "listing", t: "listing.created", c: ["notification", "user"], w: "user-service fans out seller.listed to followers" },
   { p: "listing", t: "listing.sold", c: ["notification", "user", "chat"], w: "Seller's sales count +1, pending offers closed, congratulations push" },
   { p: "listing", t: "listing.relisted", c: ["chat"], w: "Chat accepts offers on the item again" },
@@ -604,19 +634,37 @@ const EVENTS = [
   { p: "chat", t: "offer.made", c: ["notification"], w: "Push to the person receiving the offer" },
   { p: "chat", t: "offer.accepted", c: ["notification"], w: "Push to the buyer" },
   { p: "chat", t: "offer.declined", c: ["notification"], w: "Push to the buyer" },
-  { p: "food", t: "food.posted", c: ["user"], w: "user-service fans out giver.shared" },
-  { p: "food", t: "food.claimed", c: ["notification"], w: "Tell the giver someone reserved it" },
-  { p: "food", t: "food.reservation_expired", c: ["notification"], w: "Tell the taker the hold lapsed" },
-  { p: "food", t: "food.completed", c: ["notification", "user"], w: "Push, and the giver's stats" },
-  { p: "ride", t: "ride.posted", c: ["user"], w: "user-service fans out driver.offered" },
-  { p: "ride", t: "ride.booked", c: ["notification"], w: "Tell the driver who is coming" },
-  { p: "ride", t: "ride.booking_cancelled", c: ["notification"], w: "Tell the driver a seat freed up" },
-  { p: "ride", t: "ride.cancelled", c: ["notification"], w: "Tell every booked rider" },
-  { p: "ride", t: "ride.changed", c: ["notification"], w: "Tell riders the details moved" },
-  { p: "ride", t: "ride.completed", c: ["notification", "user"], w: "Push, and the driver's stats" },
+  { p: "lending", t: "lending.requested", c: ["notification"], w: "Tell the lender someone wants to borrow" },
+  { p: "lending", t: "lending.approved", c: ["notification"], w: "Tell the borrower it's theirs for those days" },
+  { p: "lending", t: "lending.declined", c: ["notification"], w: "Tell the borrower, with the reason" },
+  { p: "lending", t: "lending.cancelled", c: ["notification"], w: "Tell the other side" },
+  { p: "lending", t: "lending.due_soon", c: ["notification"], w: "Remind the borrower the day before" },
+  { p: "lending", t: "lending.overdue", c: ["notification"], w: "Nudge the borrower, tell the lender" },
+  { p: "lending", t: "lending.returned", c: ["notification", "user"], w: "Push, and user-service opens two-way reviews" },
+  { p: "lending", t: "lending.need_answered", c: ["notification"], w: "Someone can lend what you asked for" },
+  { p: "provider", t: "provider.booking_requested", c: ["notification"], w: "Tell the provider" },
+  { p: "provider", t: "provider.booking_accepted", c: ["notification"], w: "Tell the client" },
+  { p: "provider", t: "provider.booking_declined", c: ["notification"], w: "Tell the client" },
+  { p: "provider", t: "provider.booking_cancelled", c: ["notification"], w: "Tell the other side" },
+  { p: "provider", t: "provider.booking_completed", c: ["notification"], w: "Ask the client for a review" },
+  { p: "provider", t: "provider.review_posted", c: ["notification"], w: "Tell the provider" },
+  { p: "meetup", t: "meetup.joined", c: ["notification"], w: "Tell the host who's coming" },
+  { p: "meetup", t: "meetup.waitlist_promoted", c: ["notification"], w: "Tell the party they're in" },
+  { p: "meetup", t: "meetup.changed", c: ["notification"], w: "Tell everyone going" },
+  { p: "meetup", t: "meetup.cancelled", c: ["notification"], w: "Tell everyone going" },
+  { p: "meetup", t: "meetup.reminder", c: ["notification"], w: "Remind everyone going" },
+  { p: "lostfound", t: "lostfound.match_suggested", c: ["notification"], w: "Tell both posters about a likely match" },
+  { p: "lostfound", t: "lostfound.claim_submitted", c: ["notification"], w: "Tell the finder someone claims it" },
+  { p: "lostfound", t: "lostfound.claim_decided", c: ["notification"], w: "Tell the claimant" },
+  { p: "lostfound", t: "lostfound.sighting_reported", c: ["notification"], w: "Tell the owner of a lost pet" },
+  { p: "lostfound", t: "lostfound.resolved", c: ["notification", "user"], w: "Push, and user-service opens two-way reviews" },
+  { p: "housing", t: "housing.listing_match", c: ["notification"], w: "Push for a saved-search match" },
+  { p: "housing", t: "housing.viewing_booked", c: ["notification"], w: "Tell the lister" },
+  { p: "housing", t: "housing.viewing_cancelled", c: ["notification"], w: "Tell people with a viewing" },
+  { p: "housing", t: "housing.filled", c: ["notification"], w: "Tell people with a viewing it's gone" },
 ];
 const tbody = document.querySelector("#evtable tbody");
-const GROUPS = { user: "user-service sends", listing: "listing-service sends", chat: "chat-service sends", food: "food-service sends", ride: "ride-service sends" };
+const GROUPS = { user: "user-service sends", listing: "listing-service sends", chat: "chat-service sends", lending: "lending-service sends", provider: "provider-service sends", meetup: "meetup-service sends", lostfound: "lostfound-service sends", housing: "housing-service sends" };
 let last = null;
 EVENTS.forEach(e => {
   if (e.p !== last) { const tr = document.createElement("tr"); tr.className = "grp"; tr.dataset.p = e.p; tr.innerHTML = `<td colspan="5">${GROUPS[e.p]}</td>`; tbody.append(tr); last = e.p; }
@@ -625,7 +673,7 @@ EVENTS.forEach(e => {
   tbody.append(tr);
 });
 const filters = document.getElementById("filters");
-["all", "user", "listing", "chat", "food", "ride", "notification"].forEach(f => {
+["all", "user", "listing", "chat", "lending", "provider", "meetup", "lostfound", "housing", "notification"].forEach(f => {
   const b = document.createElement("button"); b.type = "button"; b.id = "f-" + f; b.textContent = f === "all" ? "All topics" : f; b.setAttribute("aria-pressed", f === "all");
   b.addEventListener("click", () => {
     filters.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
@@ -680,14 +728,14 @@ msgs.forEach(([a, b, y, label, kind]) => {
 const CARDS = [
   { n: "One front door", w: "api-gateway → every service", g: "Token checks and CORS live in one place. Services trust X-User-Id because the gateway always strips the client's copy first, and they still re-check the token.", c: "An extra network hop on every call. On Render it can mean two cold starts in a row: the gateway wakes, then the service." },
   { n: "Schema per service, one database", w: "saryom-db · Neon", g: "Real data isolation (each role can only touch its own schema) for the price of one free database.", c: "Services share CPU and connections, so one slow query slows everyone. That is why every pool is capped at three." },
-  { n: "Events instead of service-to-service calls", w: "Spring Cloud Stream · 24 topics", g: "Services stay up and deployable alone. A sale works even if notification-service is asleep.", c: "Eventual consistency: the sales count updates a moment later. And a broken flow is harder to follow, which is the case for tracing." },
+  { n: "Events instead of service-to-service calls", w: "Spring Cloud Stream · 40 topics", g: "Services stay up and deployable alone. A sale works even if notification-service is asleep.", c: "Eventual consistency: the sales count updates a moment later. And a broken flow is harder to follow, which is the case for tracing." },
   { n: "A contract repo, not a shared library", w: "saryom-kafka/asyncapi.yaml", g: "No shared JAR to version and publish; each repo builds and deploys by itself.", c: "Each service has its own copy of the event records, so drift is caught by tests and review, not by the compiler." },
   { n: "Publish after commit, without an outbox", w: "StreamBridgeEventPublisher", g: "Simple and easy to read. A failed send is logged, and the user's action still succeeds.", c: "If the broker is down at that moment the event is gone. A transactional outbox trades a table and a relay for guaranteed delivery." },
   { n: "Idempotent consumers", w: "processed_event in notification-service", g: "Brokers deliver at least once. Recording eventId makes a redelivery harmless, so nobody gets two pushes.", c: "One extra write per event, and a table that grows until you prune it." },
   { n: "Broker as a configuration choice", w: "profiles kafka / rabbit", g: "Kafka-compatible Redpanda on a laptop, free RabbitMQ in production, same code.", c: "You can only use what both share. Kafka's replay and per-key ordering aren't relied on, which is why chat-service handles out-of-order events itself." },
   { n: "Uploads that skip the backend", w: "media-service + Cloudinary", g: "Image bytes never touch a 512 MB JVM, and you get a CDN for free.", c: "Two client steps, and an upload can be orphaned if the browser never reports back." },
-  { n: "Rules the database enforces", w: "job-service RLS · ride-service constraints", g: "A bug in Java can't leak someone's applications or sell the same seat twice.", c: "Logic split between Java and SQL, and tests that need real Postgres (Testcontainers) instead of H2." },
-  { n: "Entities that own their state", w: "FoodPost, Ride, offers", g: "Lifecycle transitions live on the entity, so an invalid move can't be made from a controller.", c: "Richer entities are harder to map and to serialize; the API needs its own DTOs." },
+  { n: "Rules the database enforces", w: "job-service RLS · provider-service unique reviews", g: "A bug in Java can't leak someone's applications or post two reviews for one booking.", c: "Logic split between Java and SQL, and tests that need real Postgres (Testcontainers) instead of H2." },
+  { n: "Entities that own their state", w: "Loan, Meetup, offers", g: "Lifecycle transitions live on the entity, so an invalid move can't be made from a controller.", c: "Richer entities are harder to map and to serialize; the API needs its own DTOs." },
   { n: "Sealed types and exhaustive switches", w: "PlatformEvent, MessageContent", g: "Java 25 makes the compiler list every case. A new event type won't build until every dispatcher handles it.", c: "Every new subtype touches every switch, which is the point, but it makes adding types noisier." },
   { n: "Push telemetry, don't scrape it", w: "OpenTelemetry → Grafana Cloud", g: "A sleeping Render service is never woken by monitoring, and nothing has to be hosted. One env group turns it on everywhere.", c: "A sleeping service sends nothing, so silence looks like health. That's why alerts ignore missing data and a separate daily job checks the services are reachable." },
   { n: "Built for a tenth of a CPU", w: "Dockerfile + docker/train.sh", g: "A recorded AOT start-up cache cut cold start from 3 to 4 minutes to under one. CI checks it under the same limits.", c: "The cache only works with the exact JVM flags it was recorded with, so tuning memory means re-training." },
